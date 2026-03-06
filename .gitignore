@@ -1,0 +1,24 @@
+# Environment variables (SENSITIVE)
+.env
+.env.local
+.env.*.local
+
+./states/main.json
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Build outputs
+dist/
+build/
+.next/
+.out/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs
+*.log
+
+
