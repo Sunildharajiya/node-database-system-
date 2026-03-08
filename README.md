@@ -76,10 +76,6 @@ Generate secret key:
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
-Generate IV:
-```bash
-node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"
-```
 ---
 
 Start Server
