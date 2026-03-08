@@ -11,57 +11,61 @@ dotenv.config();
 // Encryption algorithm
 const algorithm = "aes-256-cbc";
 
-// Secret key from .env file (must be 32 bytes for AES-256)
+// Secret key from .env (must be 32 bytes hex)
 const secretKey = Buffer.from(process.env.SECRET_KEY, "hex");
 
-// Initialization vector from .env (16 bytes required)
-const iv = Buffer.from(process.env.IV, "hex");
+// Validate key length
+if (secretKey.length !== 32) {
+  throw new Error("SECRET_KEY must be 32 bytes (64 hex characters)");
+}
 
 
 /* -------------------- ENCRYPT FUNCTION -------------------- */
 
-// Encrypt plain text
 export function encrypt(text) {
 
-  // Create cipher instance
+  if (text === undefined || text === null) return text;
+
+  // Generate random IV (16 bytes)
+  const iv = crypto.randomBytes(16);
+
+  // Create cipher
   const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
 
-  // Convert UTF-8 text → encrypted HEX
+  // Encrypt
   let encrypted = cipher.update(String(text), "utf8", "hex");
-
-  // Final encryption block
   encrypted += cipher.final("hex");
 
-  return encrypted;
-}
-
-
-/* -------------------- HEX CHECK FUNCTION -------------------- */
-
-// Check if a string is hex format
-function isHex(str) {
-  return typeof str === "string" && /^[0-9a-fA-F]+$/.test(str);
+  // Return IV + encrypted data
+  return iv.toString("hex") + ":" + encrypted;
 }
 
 
 /* -------------------- DECRYPT FUNCTION -------------------- */
 
-// Decrypt encrypted hex text
 export function decrypt(text) {
 
-  // Skip decryption if text is not encrypted
-  if (!isHex(text)) {
+  if (typeof text !== "string") return text;
+
+  // Check structure
+  if (!text.includes(":")) return text;
+
+  try {
+
+    const parts = text.split(":");
+
+    const iv = Buffer.from(parts[0], "hex");
+    const encryptedText = parts[1];
+
+    // Create decipher
+    const decipher = crypto.createDecipheriv(algorithm, secretKey, iv);
+
+    let decrypted = decipher.update(encryptedText, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+
+    return decrypted;
+
+  } catch (error) {
     return text;
   }
-
-  // Create decipher instance
-  const decipher = crypto.createDecipheriv(algorithm, secretKey, iv);
-
-  // Convert HEX → UTF-8
-  let decrypted = decipher.update(text, "hex", "utf8");
-
-  // Final decryption block
-  decrypted += decipher.final("utf8");
-
-  return decrypted;
 }
