@@ -185,6 +185,6 @@ Future Improvements
 
 ---
 
-# Author
-Sunil Dharajiya
+### Author
+sunil dhrajiya
 ---
