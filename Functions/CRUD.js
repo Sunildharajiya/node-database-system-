@@ -92,31 +92,19 @@ export function readState(id) {
 
   const db = readDB();
 
-  // If no id is provided return all records
+  // Reject missing id
   if (!id) {
-
-    // Decrypt all fields except id
-    return db.map(item => {
-      const decrypted = { id: item.id };
-
-      for (let key in item) {
-        if (key !== "id") {
-          decrypted[key] = decrypt(item[key]);
-        }
-      }
-
-      return decrypted;
-    });
-
+    throw new Error("ID is required");
   }
 
-  // Find record by id
+  // Find record
   const item = db.find(item => item.id == id);
 
-  // If record not found return null
-  if (!item) return null;
+  if (!item) {
+    return null;
+  }
 
-  // Decrypt the record
+  // Decrypt fields
   const decrypted = { id: item.id };
 
   for (let key in item) {
@@ -131,43 +119,45 @@ export function readState(id) {
 
 /* -------------------- UPDATE -------------------- */
 
-// This function updates an existing record
-export function updateState(id, newData) {
+// This function updates an existing recordexport function updateState(id, newData) {
 
-  // Read database
+  if (!id) {
+    throw new Error("ID is required");
+  }
+
   const db = readDB();
 
-  // Find index of record to update
   const index = db.findIndex(item => item.id == id);
 
-  // If record not found return null
   if (index === -1) return null;
 
-  // Encrypt updated fields before saving
   for (let key in newData) {
     db[index][key] = encrypt(newData[key]);
   }
 
-  // Save updated database
   writeDB(db);
 
-  // Return decrypted updated record
   return readState(id);
 }
 
 
+
 /* -------------------- DELETE -------------------- */
 
-// This function deletes a record by id
-export function deleteState(id) {
+// This function deletes a record by idexport function deleteState(id) {
 
-  // Read database
+  if (!id) {
+    throw new Error("ID is required");
+  }
+
   const db = readDB();
 
-  // Filter out the record that should be deleted
   const newDB = db.filter(item => item.id != id);
 
-  // Save updated database
+  if (newDB.length === db.length) {
+    return false; // nothing deleted
+  }
+
   writeDB(newDB);
 
   return true;

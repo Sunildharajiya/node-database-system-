@@ -1,4 +1,4 @@
-/* -------------------- IMPORT DEPENDENCIES -------------------- */
+ /* -------------------- IMPORT DEPENDENCIES -------------------- */
 
 // Express framework for building API server
 import express from "express";
@@ -12,17 +12,19 @@ import { createState, readState, updateState, deleteState } from "./Functions/CR
 // Create express app instance
 const app = express();
 
-// Server port
-// You can access server at: http://localhost:10000
-const port = 10000;
+// Use environment port or fallback to 10000
+const port = process.env.PORT || 10000;
+
+// Hide Express server header (basic security)
+app.disable("x-powered-by");
 
 // Middleware to read JSON body from requests
-app.use(express.json());
+app.use(express.json({ limit: "10kb" }));
 
 
-/* -------------------- API ROUTES -------------------- */
+/* -------------------- ROOT ROUTE -------------------- */
 
-// Root route (check if server is running)
+// Check if server is running
 app.get("/", (req, res) => {
   res.send("Database is live");
 });
@@ -33,66 +35,109 @@ app.get("/", (req, res) => {
 // Create new record
 app.post("/create", (req, res) => {
 
-  // req.body contains JSON data sent by client
-  const data = createState(req.body);
+  try {
 
-  // Send created data as response
-  res.json(data);
-});
+    // Validate request body
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return res.status(400).send("Request body is required");
+    }
 
+    const data = createState(req.body);
 
-/* -------------------- READ ALL -------------------- */
+    res.status(201).json(data);
 
-// Get all records
-app.get("/read", (req, res) => {
+  } catch (error) {
+    res.status(500).send("Server error");
+  }
 
-  // readState() without id returns all records
-  const data = readState();
-
-  res.json(data);
 });
 
 
 /* -------------------- READ BY ID -------------------- */
 
-// Get specific record by id
+// Get specific record
 app.get("/read/:id", (req, res) => {
 
-  const data = readState(req.params.id);
+  try {
 
-  if (!data) {
-    return res.status(404).send("Not found");
+    const id = req.params.id;
+
+    if (!id) {
+      return res.status(400).send("ID is required");
+    }
+
+    const data = readState(id);
+
+    if (!data) {
+      return res.status(404).send("Record not found");
+    }
+
+    res.json(data);
+
+  } catch (error) {
+    res.status(500).send("Server error");
   }
 
-  res.json(data);
 });
 
 
 /* -------------------- UPDATE -------------------- */
 
-// Update record by id
+// Update record
 app.put("/update/:id", (req, res) => {
 
-  const data = updateState(req.params.id, req.body);
+  try {
 
-  if (!data) {
-    return res.status(404).send("Not found");
+    const id = req.params.id;
+
+    if (!id) {
+      return res.status(400).send("ID is required");
+    }
+
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return res.status(400).send("Update data required");
+    }
+
+    const data = updateState(id, req.body);
+
+    if (!data) {
+      return res.status(404).send("Record not found");
+    }
+
+    res.json(data);
+
+  } catch (error) {
+    res.status(500).send("Server error");
   }
 
-  console.log("Update done");
-
-  res.json(data);
 });
 
 
 /* -------------------- DELETE -------------------- */
 
-// Delete record by id
+// Delete record
 app.delete("/delete/:id", (req, res) => {
 
-  deleteState(req.params.id);
+  try {
 
-  res.send("Deleted");
+    const id = req.params.id;
+
+    if (!id) {
+      return res.status(400).send("ID is required");
+    }
+
+    const deleted = deleteState(id);
+
+    if (!deleted) {
+      return res.status(404).send("Record not found");
+    }
+
+    res.send("Deleted successfully");
+
+  } catch (error) {
+    res.status(500).send("Server error");
+  }
+
 });
 
 
