@@ -76,6 +76,10 @@ Generate secret key:
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
+Generate IV:
+```bash
+node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"
+```
 ---
 
 Start Server
@@ -89,63 +93,53 @@ Server will run at:
 
 ---
 
-API Endpoints
+# API Endpoints
 
-Check Server
-
-GET /
-
-Response:
-
-Database is live
+Method| Endpoint| Purpose| Body Required| Parameters
+GET| "/"| Check if the server is running| No| None
+POST| "/create"| Create a new record in the database| Yes| None
+GET| "/read/:id"| Retrieve a specific record| No| "id" (Record ID)
+PUT| "/update/:id"| Update an existing record| Yes| "id" (Record ID)
+DELETE| "/delete/:id"| Delete a record from the database| No| "id" (Record ID)
 
 ---
 
-Create Record
+Request Body Examples
 
-POST /create
-
-Body example:
-```
+- Create Record
+```js
 {
-"name":"Gujarat",
-"capital":"Gandhinagar"
+  "name": "Gujarat",
+  "capital": "Gandhinagar"
+}
+```
+- Update Record
+```js
+{
+  "capital": "Ahmedabad"
 }
 ```
 ---
 
-Read All Records
+### Example API Requests
 
-GET /read
-
----
-
-Read Single Record
-
-GET /read/:id
-
-Example:
+- Read Record Example
 
 `GET /read/20260305A4Z224530A4Z123A4Z`
 
+- Delete Record Example
+
+DELETE 
+`/delete/20260305A4Z224530A4Z123A4Z`
+
 ---
 
-Update Record
+### Notes
 
-PUT /update/:id
-
-Body example:
-```
-{
-"capital":"Ahmedabad"
-}
-```
----
-
-Delete Record
-
-`DELETE /delete/:id`
-
+- Every record automatically receives a unique "id".
+- All fields except "id" are encrypted before being stored.
+- Data is automatically decrypted when returned through the API.
+- The API accepts request bodies in JSON format.
 ---
 
 Encryption
@@ -192,7 +186,6 @@ Future Improvements
 
 ---
 
-Author
-
+# Author
 Sunil Dharajiya
 ---
