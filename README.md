@@ -95,13 +95,13 @@ Server will run at:
 
 # API Endpoints
 
-| Method | Endpoint      | Purpose                    | Body Required | Parameters |
-|------- |-------------- |--------------------------- |--------------|-----------|
-| GET    | /             | Check server               | No           | None      |
-| POST   | /create       | Create a new record        | Yes          | None      |
-| GET    | /read/:id     | Retrieve a record by ID    | No           | id        |
-
----
+| Method | Endpoint | Purpose | Body Required | Parameters |
+|--------|----------|---------|---------------|------------|
+| GET | `/` | Check if the API server is running | No | None |
+| POST | `/create` | Create a new record in the database | Yes | None |
+| GET | `/read/:id` | Retrieve a specific record by ID | No | `id` |
+| PUT | `/update/:id` | Update an existing record | Yes | `id` |
+| DELETE | `/delete/:id` | Delete a record from the database | No | `id` |
 
 Request Body Examples
 
