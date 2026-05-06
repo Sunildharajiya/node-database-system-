@@ -14,3 +14,15 @@ A lightweight Node.js file-based database API with AES-256 encryption and full C
 - Lightweight and easy to run
 - Built using Express.js
 - Beginner-friendly backend architecture
+
+  # enveronment variables
+Create a ".env" file in the project root.
+```
+SECRET_KEY=<your_genrated_secrate_key>
+```
+## Genrate SECRET_KEY
+ for Genrate SECRET_KEY run this in terminal or cmd and pest genrated text in '.env' file
+ 
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
