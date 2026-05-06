@@ -1,4 +1,4 @@
-import crypto from "crypto";
+
 
 // class defination
 export class Schema {
@@ -22,8 +22,3 @@ export const types = {
 
 
 
-// id genrator
-
-export function generateId() {
-  return crypto.randomBytes(8).toString("hex");
-}

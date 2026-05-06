@@ -1,8 +1,15 @@
+import fs from "fs";
+import { getCollectionPath } from "./config.js";
+import { ensureCollection } from "./ensure.js";
+
 /* -------------------- WRITE DATABASE -------------------- */
 
-// This function writes updated data to the database file
-export function writeDB(data) {
+export function writeDB(collection, data) {
 
-  // Convert JavaScript object to formatted JSON
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
+  // Ensure collection exists
+  ensureCollection(collection);
+
+  const filePath = getCollectionPath(collection);
+
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 }

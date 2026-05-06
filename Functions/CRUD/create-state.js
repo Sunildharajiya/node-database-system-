@@ -1,34 +1,31 @@
-import './config.js'
-import { readDB } from "readDB.js"
-import { writeDB } from "./writeDB.js"
+import { readDB } from "./readDB.js";
+import { writeDB } from "./writeDB.js";
+import { validate } from "../schema/validate.js";
+import { generateId } from "../utils/id.js";
 
 /* -------------------- CREATE -------------------- */
 
-// This function creates a new record in database
-export function createState(data) {
+export async function create(collection, schema, data) {
 
-  // Read current database
-  const db = readDB();
+  // 1. Read collection data
+  const db = readDB(collection);
 
-  // Object to store encrypted fields
-  const encryptedData = {};
+  // 2. Generate unique ID
+  let id;
+  do {
+    id = generateId();
+  } while (db.some(item => item.id === id));
 
-  // Encrypt every field from incoming data
-  for (let key in data) {
-    encryptedData[key] = encrypt(data[key]);
-  }
+  data.id = id;
 
-  // Create new item with unique id
-  const newItem = {
-    id: GenerateId(), // id is NOT encrypted
-    ...encryptedData
-  };
+  // 3. Validate + transform (schema handles hashing etc.)
+  const validData = await validate(schema, data, db);
 
-  // Add new item to database
-  db.push(newItem);
+  // 4. Insert
+  db.push(validData);
 
-  // Save updated database
-  writeDB(db);
+  // 5. Save
+  writeDB(collection, db);
 
-  return newItem;
+  return validData;
 }

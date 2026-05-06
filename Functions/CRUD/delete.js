@@ -1,26 +1,21 @@
-import './config.js'
-import { readDB } from "readDB.js"
-import { writeDB } from "./writeDB.js"
-
-
-/* -------------------- DELETE -------------------- */
-
-// This function deletes a record by id
-export function deleteState(id) {
+export function remove(collection, id) {
 
   if (!id) {
     throw new Error("ID is required");
   }
 
-  const db = readDB();
+  const db = readDB(collection);
 
-  const newDB = db.filter(item => item.id != id);
+  // Find the item BEFORE deleting
+  const deleted = db.find(item => item.id === id);
 
-  if (newDB.length === db.length) {
-    return false; // nothing deleted
-  }
+  if (!deleted) return null;
 
-  writeDB(newDB);
+  // Remove it
+  const newDB = db.filter(item => item.id !== id);
 
-  return true;
+  // Save updated DB
+  writeDB(collection, newDB);
+
+  return deleted;
 }

@@ -1,25 +1,31 @@
-import './config.js'
-import { readDB } from "readDB.js"
-import { writeDB } from "./writeDB.js"
+import { readDB } from "./read.js";
+import { writeDB } from "./write.js";
 
-export const update = (id) =>{
-  
-if (!id) {
+/* -------------------- UPDATE -------------------- */
+
+export const update = (collection, id, newData) => {
+
+  if (!id) {
     throw new Error("ID is required");
   }
 
-  const db = readDB();
+  // 1. Read collection
+  const db = readDB(collection);
 
-  const index = db.findIndex(item => item.id == id);
+  // 2. Find index
+  const index = db.findIndex(item => item.id === id);
 
   if (index === -1) return null;
 
-  for (let key in newData) {
-    db[index][key] = encrypt(newData[key]);
-  }
+  // 3. Update fields (merge)
+  db[index] = {
+    ...db[index],
+    ...newData
+  };
 
-  writeDB(db);
+  // 4. Save
+  writeDB(collection, db);
 
-  return readState(id);
-}
-
+  // 5. Return updated item
+  return db[index];
+};
