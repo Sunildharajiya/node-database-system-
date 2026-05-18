@@ -2,6 +2,8 @@ import fs from "fs";
 import { getCollectionPath } from "./config.js";
 import { ensureCollection } from "./ensure.js";
 
+import { decrypt } from "../Encryption/encryption.js"
+
 /* -------------------- READ DATABASE -------------------- */
 
 export function readDB(collection) {
@@ -12,6 +14,6 @@ export function readDB(collection) {
   const filePath = getCollectionPath(collection);
 
   const data = fs.readFileSync(filePath, "utf8");
-
-  return data ? JSON.parse(data) : [];
+  const decrypted = decrypt(data)
+  return decrypted ? JSON.parse(decrypted) : [];
 }

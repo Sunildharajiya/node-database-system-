@@ -1,5 +1,4 @@
 import { User } from "./Model/user.model.js";
-
 async function testDB() {
   console.log("🚀 Testing Started...\n");
 
@@ -32,5 +31,4 @@ async function testDB() {
   // FINAL STATE
   console.log("Final Users:", User.find());
 }
-
 testDB();

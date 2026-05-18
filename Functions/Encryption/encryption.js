@@ -14,7 +14,7 @@ if (secretKey.length !== 32) {
 }
 
 /* -------------------- ENCRYPT FUNCTION -------------------- */
- export function encrypt(text) {
+ export const encrypt = (text) =>{
 
   if (text === undefined || text === null) return text;
 
