@@ -29,3 +29,5 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 ## Read documentation
 - [Model layer](Documentation/modelLayer.md)
+- [Functions/schema layer](Documentation/schema.md)
+- [Functions/CRUD](Documentation/CRUD.md)
